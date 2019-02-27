@@ -15,6 +15,10 @@ class CameraViewController: UIViewController, UIImagePickerControllerDelegate, U
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var commentField: UITextField!
     
+    @IBAction func onCancel(_ sender: Any) {
+        dismiss(animated: true, completion: nil)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -27,8 +31,9 @@ class CameraViewController: UIViewController, UIImagePickerControllerDelegate, U
         post["caption"] = commentField.text!
         post["author"] = PFUser.current()!
         
-        let imageData = imageView.image!.pngData()
-        let file = PFFileObject(data: imageData)
+        //let imageData = imageView.image!.pngData()
+        let imageData = UIImagePNGRepresentation(imageView.image!)
+        let file = PFFileObject(data: imageData!)
         
         post["image"] = file
         
@@ -57,14 +62,15 @@ class CameraViewController: UIViewController, UIImagePickerControllerDelegate, U
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        let image = info[.editedImage] as! UIImage
+        // replace 'Slice<Dictionary<String, Any>>' is not convertible to 'UIImage' with .editedImage on new version
+        let image = info[UIImagePickerControllerEditedImage] as! UIImage
         
         let size = CGSize(width: 300, height: 300)
         let scaledImage = image.af_imageScaled(to: size)
         
         imageView.image = scaledImage
         
-        dismiss(dismiss(animated: true, completion: nil))
+        dismiss(animated: true, completion: nil)
     }
     
     override func didReceiveMemoryWarning() {
